@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Syed Muhammad Abdullah — Professional Portfolio</title>
+
+  <style>
+  /* --------------------------
+     Base / Typography
+     -------------------------- */
+  :root{
+    --bg:#fbfcfd;
+    --card:#ffffff;
+    --muted:#64748b;
+    --text:#0b1a2b;
+    --accent:#0bb79b;
+    --accent-2:#2b7bff;
+    --glass: rgba(11,26,43,0.04);
+    --radius:12px;
+    --shadow: 0 12px 30px rgba(11,26,43,0.06);
+    --maxwidth:1150px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size:15px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg), #ffffff);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.5;
+  }
+  a{color:inherit}
+  .container{max-width:var(--maxwidth);margin:0 auto;padding:24px;position:relative;z-index:2}
+
+  /* --------------------------
+     Canvas background
+     -------------------------- */
+  canvas#network-bg{
+    position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.95;
+    filter:blur(.2px) saturate(.95);
+  }
+
+  /* --------------------------
+     Top header
+     -------------------------- */
+  header.topbar{
+    position:sticky;top:0;z-index:10;background:rgba(255,255,255,0.86);
+    backdrop-filter: blur(6px);border-bottom:1px solid rgba(11,26,43,0.03);
+  }
+  .topbar-inner{max-width:var(--maxwidth);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .avatar{
+    width:56px;height:56px;border-radius:12px;background:#eaf6f4;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);
+    flex-shrink:0;font-size:22px;
+  }
+  .brand .meta{line-height:1}
+  .brand .meta .name{font-weight:700}
+  .brand .meta .role{font-size:13px;color:var(--muted)}
+  nav.topnav{display:flex;gap:14px;align-items:center}
+  nav.topnav a{font-weight:600;color:var(--text);text-decoration:none;padding:8px;border-radius:8px}
+  nav.topnav a:hover{background:var(--glass)}
+
+  /* --------------------------
+     Enhanced Hero Section
+     -------------------------- */
+  .hero{display:grid;grid-template-columns:1fr 360px;gap:28px;margin:28px auto 18px}
+  .hero-left h1{
+    font-size:42px;
+    margin:0 0 8px;
+    font-weight:800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .hero-left p.lead{
+    color:var(--text);
+    margin:0 0 14px;
+    max-width:64ch;
+    font-size:18px;
+    font-weight:500;
+  }
+  .hero-left p.lead.muted{
+    color:var(--muted);
+    font-size:16px;
+    font-weight:400;
+  }
+  .contact-quick{display:flex;gap:12px;color:var(--muted);font-size:14px;margin:10px 0}
+  .hero-ctas{display:flex;gap:10px;margin-top:20px}
+  .btn{border:0;padding:12px 18px;border-radius:10px;cursor:pointer;font-weight:700;transition:all 0.3s ease}
+  .btn.primary{
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#fff;
+    box-shadow: 0 4px 15px rgba(11, 183, 155, 0.3);
+  }
+  .btn.primary:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(11, 183, 155, 0.4);
+  }
+  .btn.ghost{
+    background:transparent;
+    border:1px solid rgba(11,26,43,0.06);
+    color:var(--text);
+  }
+  .btn.ghost:hover{
+    background: rgba(11,26,43,0.03);
+    transform: translateY(-2px);
+  }
+
+  /* highlights card */
+  .highlights.card{
+    padding:20px;
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    background:var(--card);
+    border-left: 4px solid var(--accent);
+  }
+  .highlights ul{margin:8px 0 0 18px;color:var(--muted);font-size:14px}
+  .highlights .card-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:12px;
+    color: var(--text);
+  }
+
+  /* --------------------------
+     Sections & grid
+     -------------------------- */
+  section.wrap{padding:18px 0}
+  h2.section-title{
+    margin:0 0 14px;
+    font-size:28px;
+    font-weight:800;
+    position:relative;
+    display:inline-block;
+  }
+  h2.section-title:after{
+    content:'';
+    position:absolute;
+    bottom:-5px;
+    left:0;
+    width:60px;
+    height:4px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    border-radius:2px;
+  }
+  .grid{display:grid;gap:16px}
+  .projects-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .experience-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .skills-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .cert-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .card{
+    background:var(--card);
+    padding:20px;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(11,26,43,0.1);
+  }
+
+  /* Project card with background images */
+  .project-media{
+    position: relative;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:10px;
+    background:#f6fbfa;
+    height:200px;
+  }
+  .project-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+  }
+  .project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(11, 27, 43, 0.7) 0%,
+      rgba(11, 183, 155, 0.4) 100%
+    );
+    border-radius: 10px;
+  }
+  .project-icon{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:rgba(255,255,255,0.9);
+    width:40px;
+    height:40px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+  .muted{color:var(--muted);font-size:14px}
+
+  /* experience */
+  .exp .muted{margin-bottom:8px}
+  .exp ul{margin-left:18px;color:var(--muted)}
+  .exp h3{
+    font-weight:700;
+    font-size:18px;
+    margin-bottom:5px;
+  }
+
+  /* contact layout */
+  .contact-grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+  .contact-card p{margin:8px 0;color:var(--muted)}
+  .small{font-size:13px;color:var(--muted)}
+
+  /* footer */
+  footer.site-footer{padding:26px 0;text-align:center;color:var(--muted);font-size:13px}
+
+  /* responsive */
+  @media (max-width:980px){
+    .hero{grid-template-columns:1fr}
+    .contact-grid{grid-template-columns:1fr}
+    nav.topnav{display:none}
+    .container{padding:0 18px}
+    .hero-left h1{font-size:32px}
+  }
+
+  /* subtle entrance animation controlled by JS */
+  .reveal{opacity:0;transform:translateY(18px);transition:all .7s cubic-bezier(.2,.9,.2,1)}
+  .reveal.inview{opacity:1;transform:none}
+
+  /* project carousel enhanced style */
+  .carousel{position:relative;overflow:hidden;border-radius:12px}
+  .carousel-track{display:flex;transition:transform .45s ease}
+  .carousel-slide{
+    min-width:100%;
+    flex:0 0 100%;
+    padding:10px;
+  }
+  .carousel-controls{display:flex;justify-content:space-between;gap:12px;margin-top:10px}
+  .dot{width:12px;height:12px;border-radius:50%;background:#e6eef6;display:inline-block;opacity:.6;cursor:pointer;transition:all 0.3s ease}
+  .dot.active{background:var(--accent-2);opacity:1;transform: scale(1.2)}
+
+  /* AI widget */
+  #ai-widget{position:fixed;right:20px;bottom:20px;z-index:12}
+  #ai-btn{
+    width:56px;
+    height:56px;
+    border-radius:999px;
+    border:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#fff;
+    font-size:20px;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(11,26,43,.12);
+    transition: all 0.3s ease;
+  }
+  #ai-btn:hover{
+    transform: scale(1.1);
+    box-shadow:0 12px 35px rgba(11,26,43,.2);
+  }
+  .ai-panel{width:360px;max-width:92vw;background:var(--card);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;display:none}
+  .ai-panel.show{display:block;animation: slideUp 0.3s ease}
+  .ai-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(11,26,43,0.04)}
+  .ai-body{padding:12px 14px}
+  .ai-body textarea{width:100%;min-height:80px;padding:10px;border-radius:8px;border:1px solid rgba(11,26,43,0.06);}
+
+  /* Skill icons */
+  .skill-icon{
+    width:50px;
+    height:50px;
+    border-radius:10px;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    color:white;
+    font-size:24px;
+  }
+  .skill-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .skill-card strong{
+    font-size:16px;
+    margin-bottom:5px;
+  }
+
+  /* Animations */
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  /* accessibility focus */
+  :focus{outline:3px solid color-mix(in srgb,var(--accent) 30%, transparent);outline-offset:3px}
+  </style>
+</head>
+<body>
+  <!-- Background canvas (very subtle network lines) -->
+  <canvas id="network-bg" aria-hidden="true"></canvas>
+
+  <!-- Main container -->
+  <div class="container" role="main" aria-labelledby="intro-title">
+
+    <!-- Header -->
+    <header class="topbar" role="banner" aria-label="Top navigation">
+      <div class="topbar-inner">
+        <div class="brand" aria-hidden="false">
+          <div class="avatar pulse" aria-hidden="true">S</div>
+          <div class="meta">
+            <div class="name">Syed Muhammad Abdullah</div>
+            <div class="role">Senior Network Engineer</div>
+          </div>
+        </div>
+
+        <nav class="topnav" role="navigation" aria-label="Primary">
+          <a href="#projects">Projects</a>
+          <a href="#experience">Experience</a>
+          <a href="#certs">Certifications</a>
+          <a href="#contact" class="btn ghost">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ENHANCED HERO -->
+    <section class="hero container reveal" id="home" aria-labelledby="intro-title">
+      <div class="hero-left">
+        <h1 id="intro-title">Senior Network & Security Engineer</h1>
+        <p class="lead">Designing and operating enterprise-grade networks with a focus on <strong>security, high-availability and multi-site connectivity</strong> for healthcare and corporate clients.</p>
+
+        <p class="lead muted">
+          <strong>Core Expertise:</strong> Cisco FTD/FMC, WLC 9800 HA, FortiGate, Sophos, SD-WAN, BGP, OSPF, MPLS, Nexus, CUCM, Veeam DR.
+        </p>
+
+        <div class="contact-quick small">
+          <div><strong>Email:</strong> <a href="mailto:engr.syedmabdullah@gmail.com">engr.syedmabdullah@gmail.com</a></div>
+          <div><strong>Phone:</strong> <a href="tel:+923076637100">+92 307 6637100</a></div>
+          <div><strong>Location:</strong> PCSIR, Lahore, Punjab, Pakistan</div>
+        </div>
+
+        <div class="hero-ctas">
+          <a class="btn primary" href="#projects">View Projects</a>
+          <a class="btn ghost" id="download-resume" href="SYED MUHAMMAD ABDULLAH-Resume.pdf" download>Download CV</a>
+        </div>
+      </div>
+
+      <aside class="hero-right">
+        <div class="highlights card reveal" aria-hidden="false">
+          <div class="card-title">Core Strengths</div>
+          <ul>
+            <li><strong>Enterprise routing & switching</strong> (BGP/OSPF/MPLS)</li>
+            <li><strong>Network security & NGFWs</strong> — Cisco Firepower, FortiGate, Sophos</li>
+            <li><strong>Wireless infrastructure</strong> — WLC 9800 HA & large AP deployments</li>
+            <li><strong>DR & multi-site solutions</strong> (SD-WAN, MPLS) and backups (Veeam)</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="wrap reveal" aria-labelledby="projects-title">
+      <h2 id="projects-title" class="section-title">Key Projects & Case Studies</h2>
+
+      <!-- Carousel: simple slider with JS controls -->
+      <div class="card">
+        <div class="carousel" id="proj-carousel" aria-roledescription="carousel">
+          <div class="carousel-track" id="carousel-track">
+            <!-- Slide 1: WLC 9800 HA Deployment (from resume) -->
+            <div class="carousel-slide" role="group" aria-label="Slide 1 of 3">
+              <div class="project-media" aria-hidden="true">
+                <!-- Background image with overlay -->
+                <div class="project-bg-image" style="background-image: url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')">
+                  <div class="project-overlay"></div>
+                </div>
+                <div class="project-icon">📡</div>
+              </div>
+              <h3><strong>WLC 9800 HA Deployment</strong></h3>
+              <p class="muted">High-availability wireless controller deployment with <strong>250+ APs</strong> — centralized management and 802.1X integration.</p>
+              <div class="small muted" style="margin-top:10px"><strong>Role:</strong> Design & deployment • <strong>Date:</strong> Apr 2024 – Present</div>
+            </div>
+
+            <!-- Slide 2: FTD 2130 Upgrade -->
+            <div class="carousel-slide" role="group" aria-label="Slide 2 of 3">
+              <div class="project-media" aria-hidden="true">
+                <div class="project-bg-image" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')">
+                  <div class="project-overlay"></div>
+                </div>
+                <div class="project-icon">🛡️</div>
+              </div>
+              <h3><strong>FTD 2130 Upgrade & FMC Integration</strong></h3>
+              <p class="muted">Complete migration and policy tuning for <strong>Cisco Firepower 2130</strong> integrated with FMC with minimal downtime.</p>
+              <div class="small muted" style="margin-top:10px"><strong>Role:</strong> Security migration • <strong>Date:</strong> 2023–2024</div>
+            </div>
+
+            <!-- Slide 3: FortiGate SD-WAN -->
+            <div class="carousel-slide" role="group" aria-label="Slide 3 of 3">
+              <div class="project-media" aria-hidden="true">
+                <div class="project-bg-image" style="background-image: url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')">
+                  <div class="project-overlay"></div>
+                </div>
+                <div class="project-icon">🌐</div>
+              </div>
+              <h3><strong>FortiGate SD-WAN & Traffic Shaping</strong></h3>
+              <p class="muted"><strong>FortiGate 201F</strong> deployment with SD-WAN policies, traffic shaping and DR across branch uplinks.</p>
+              <div class="small muted" style="margin-top:10px"><strong>Role:</strong> SD-WAN lead • <strong>Date:</strong> 2022</div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="carousel-controls" aria-hidden="false" style="margin-top:12px">
+            <div>
+              <button id="prev" class="btn ghost" aria-label="Previous project">‹ Prev</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div id="dots" aria-hidden="true"></div>
+            </div>
+            <div>
+              <button id="next" class="btn ghost" aria-label="Next project">Next ›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="wrap reveal" aria-labelledby="exp-title">
+      <h2 id="exp-title" class="section-title">Professional Experience</h2>
+
+      <div class="grid experience-grid">
+        <article class="card exp" aria-labelledby="exp1-title">
+          <h3 id="exp1-title"><strong>Senior Network Engineer</strong> — Shaukat Khanum Memorial Cancer Hospital</h3>
+          <div class="muted">Apr 2024 – Present</div>
+          <ul>
+            <li>Configured network switches & port security; deployed FMC with <strong>Cisco Firepower 2130</strong>.</li>
+            <li>Implemented redundancy across <strong>9 remote sites</strong> (L2/L3 over MPLS & radio links).</li>
+            <li>Deployed <strong>WLC 9800 HA</strong> and upgraded FTD 2130 with FMC 7.6 integration.</li>
+          </ul>
+        </article>
+
+        <article class="card exp" aria-labelledby="exp2-title">
+          <h3 id="exp2-title"><strong>Assistant Manager Network Ops</strong> — Evercare Hospital Lahore</h3>
+          <div class="muted">Feb 2023 – Feb 2024</div>
+          <ul>
+            <li>Managed core infrastructure (<strong>Nexus 9000, 4451 gateway</strong>), VOIP with CUCM, ASA & Firepower.</li>
+            <li>Deployed <strong>FortiGate 201F</strong>, SD-WAN and designed DR with Veeam backups.</li>
+          </ul>
+        </article>
+
+        <article class="card exp" aria-labelledby="exp3-title">
+          <h3 id="exp3-title"><strong>Senior Network Engineer</strong> — The Superior Group</h3>
+          <div class="muted">Jan 2021 – Feb 2023</div>
+          <ul>
+            <li>L2/L3 config for <strong>14 sites</strong>; FortiGate & Sophos deployments; NMS setup (Zabbix, Cacti).</li>
+            <li>WLC & AP deployments, VOIP & CCTV integration.</li>
+          </ul>
+        </article>
+
+        <article class="card exp" aria-labelledby="exp4-title">
+          <h3 id="exp4-title"><strong>Network Engineer</strong> — Edusoft System Solutions</h3>
+          <div class="muted">2016 – 2020</div>
+          <ul>
+            <li>Large LAN/WAN builds, fiber, data center support, SQL and Windows Server administration.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="wrap reveal" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="section-title">Skills & Technologies</h2>
+      <div class="grid skills-grid">
+        <div class="card skill-card">
+          <div class="skill-icon">🔄</div>
+          <strong>Routing & Switching</strong>
+          <div class="muted">BGP, OSPF, MPLS, VLANs, Nexus</div>
+        </div>
+        <div class="card skill-card">
+          <div class="skill-icon">🔒</div>
+          <strong>Network Security</strong>
+          <div class="muted">Cisco FTD/FMC, ASA, FortiGate, Sophos</div>
+        </div>
+        <div class="card skill-card">
+          <div class="skill-icon">📶</div>
+          <strong>Wireless</strong>
+          <div class="muted">WLC 9800, AP deployment, 802.1X</div>
+        </div>
+        <div class="card skill-card">
+          <div class="skill-icon">☁️</div>
+          <strong>Cloud & Backup</strong>
+          <div class="muted">AWS (Associate), Veeam DR</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certs" class="wrap reveal" aria-labelledby="certs-title">
+      <h2 id="certs-title" class="section-title">Certifications & Education</h2>
+      <div class="grid cert-grid">
+        <div class="card">
+          <strong>CCNP Enterprise</strong>
+          <div class="muted">Cisco — Issued Oct 2023</div>
+        </div>
+        <div class="card">
+          <strong>CCNP Security</strong>
+          <div class="muted">Cisco — Issued Mar 2025</div>
+        </div>
+        <div class="card">
+          <strong>AWS Solutions Architect – Associate</strong>
+          <div class="muted">Amazon — Apr 2023</div>
+        </div>
+        <div class="card">
+          <strong>Education</strong>
+          <div class="muted">(Details as per resume)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="wrap reveal" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="section-title">Get In Touch</h2>
+
+      <div class="contact-grid">
+        <form class="card" id="contact-form" aria-label="Contact form">
+          <label style="display:block;margin-bottom:8px"><span class="small">Name</span><input name="name" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(11,26,43,0.06)"></label>
+          <label style="display:block;margin-bottom:8px"><span class="small">Email</span><input name="email" type="email" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(11,26,43,0.06)"></label>
+          <label style="display:block;margin-bottom:8px"><span class="small">Message</span><textarea name="message" rows="5" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(11,26,43,0.06)"></textarea></label>
+
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button type="submit" class="btn primary">Send Message</button>
+            <button type="reset" class="btn ghost">Reset</button>
+          </div>
+          <div id="form-status" class="small muted" style="margin-top:10px" role="status" aria-live="polite"></div>
+        </form>
+
+        <aside class="card contact-card">
+          <h3>Contact Details</h3>
+          <p class="small muted"><strong>Email:</strong> <a href="mailto:engr.syedmabdullah@gmail.com">engr.syedmabdullah@gmail.com</a></p>
+          <p class="small muted"><strong>Phone:</strong> <a href="tel:+923076637100">+92 307 6637100</a></p>
+          <p class="small muted"><strong>Location:</strong> PCSIR, Lahore, Punjab, Pakistan</p>
+
+          <div style="margin-top:10px" class="small muted">Resume: <a href="SYED MUHAMMAD ABDULLAH-Resume.pdf" id="resume-link" download>Download PDF</a></div>
+        </aside>
+      </div>
+    </section>
+
+    <footer class="site-footer small muted">
+      © <span id="year"></span> Syed M. Abdullah — Corporate professional portfolio
+    </footer>
+  </div>
+
+  <!-- Minimal AI assistant (collapsed by default) -->
+  <div id="ai-widget">
+    <button id="ai-btn" aria-label="Open assistant">💬</button>
+    <div class="ai-panel" id="ai-panel" role="dialog" aria-hidden="true" aria-label="AI assistant (demo)">
+      <div class="ai-header">
+        <strong>AI Assistant (Demo)</strong>
+        <button id="ai-close" aria-label="Close assistant" style="border:0;background:transparent;font-size:18px;cursor:pointer">✕</button>
+      </div>
+      <div class="ai-body">
+        <textarea id="ai-input" placeholder="Ask to summarize a project or get tips..." aria-label="AI input"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="ai-send" class="btn primary">Ask</button>
+          <button id="ai-clear" class="btn ghost">Clear</button>
+        </div>
+        <div id="ai-output" class="small muted" style="margin-top:10px" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline JS: network canvas, carousel, reveals, simple form + AI demo -->
+  <script>
+  (function(){
+    /* --- Fill year --- */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* --- Subtle network canvas (performance conscious) --- */
+    const canvas = document.getElementById('network-bg');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+    const N = Math.max(14, Math.round((W*H)/140000)); // adapt to screen size
+    const nodes = [];
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+    for(let i=0;i<N;i++){
+      nodes.push({x:rand(0,W), y:rand(0,H), vx:rand(-0.35,0.35), vy:rand(-0.28,0.28), r:rand(1.2,2.6)});
+    }
+    function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    addEventListener('resize', resize);
+
+    function step(){
+      ctx.clearRect(0,0,W,H);
+      // draw faint dots
+      for(const n of nodes){
+        n.x += n.vx; n.y += n.vy;
+        if(n.x<0||n.x>W) n.vx *= -1;
+        if(n.y<0||n.y>H) n.vy *= -1;
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(11,26,43,0.08)';
+        ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fill();
+      }
+      // draw lines between nearby nodes (very faint)
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if(d < 120){
+            const alpha = 0.12 * (1 - d/120);
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+            ctx.strokeStyle = 'rgba(11,26,43,' + alpha.toFixed(3) + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(step);
+    }
+    step();
+
+    /* --- Simple reveal on scroll --- */
+    const reveals = document.querySelectorAll('.reveal');
+    function revealOnScroll(){
+      const trigger = innerHeight * 0.88;
+      for(const el of reveals){
+        const r = el.getBoundingClientRect();
+        if(r.top < trigger) el.classList.add('inview');
+      }
+    }
+    addEventListener('scroll', revealOnScroll, {passive:true});
+    revealOnScroll();
+
+    /* --- Carousel (projects) --- */
+    const track = document.getElementById('carousel-track');
+    const slides = Array.from(track.children);
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const dotsWrap = document.getElementById('dots');
+    let index = 0;
+    // create dots
+    slides.forEach((s,i)=>{
+      const d = document.createElement('span'); d.className='dot'+(i===0?' active':''); d.dataset.i=i;
+      d.addEventListener('click',()=>goTo(i)); dotsWrap.appendChild(d);
+    });
+    function updateDots(){ dotsWrap.querySelectorAll('.dot').forEach((d,ii)=>d.classList.toggle('active',ii===index)); }
+    function goTo(i){
+      index = (i + slides.length) % slides.length;
+      track.style.transform = 'translateX(-' + (index*100) + '%)';
+      updateDots();
+    }
+    prevBtn.addEventListener('click',()=> goTo(index-1));
+    nextBtn.addEventListener('click',()=> goTo(index+1));
+    // autoplay with pause on hover
+    let autoplay = setInterval(()=> goTo(index+1), 4200);
+    const carousel = document.getElementById('proj-carousel');
+    carousel.addEventListener('mouseenter', ()=> clearInterval(autoplay));
+    carousel.addEventListener('mouseleave', ()=> autoplay = setInterval(()=> goTo(index+1), 4200));
+
+    /* --- Contact form (demo) --- */
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    if(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        status.textContent = 'Sending...';
+        // demo only - replace with your endpoint
+        setTimeout(()=>{ status.textContent = 'Message sent (demo). Replace with real endpoint.'; form.reset(); }, 900);
+      });
+    }
+
+    /* --- Minimal AI assistant demo (collapsed default) --- */
+    const aiBtn = document.getElementById('ai-btn');
+    const aiPanel = document.getElementById('ai-panel');
+    const aiClose = document.getElementById('ai-close');
+    const aiSend = document.getElementById('ai-send');
+    const aiInput = document.getElementById('ai-input');
+    const aiOutput = document.getElementById('ai-output');
+    aiBtn.addEventListener('click', ()=>{ aiPanel.classList.toggle('show'); aiPanel.setAttribute('aria-hidden', aiPanel.classList.contains('show') ? 'false':'true'); });
+    aiClose.addEventListener('click', ()=>{ aiPanel.classList.remove('show'); aiPanel.setAttribute('aria-hidden','true'); });
+    if(aiSend){
+      aiSend.addEventListener('click', ()=>{
+        const q = (aiInput && aiInput.value||'').trim();
+        if(!q){ aiOutput.textContent = 'Please enter a question (demo).'; return; }
+        // demo canned -> strictly resume-based summary if asked
+        if(/summary|summar/i.test(q)){
+          aiOutput.innerHTML = '<strong>Summary:</strong> Senior Network Engineer (8+ yrs): Cisco FTD/FMC, WLC 9800 HA, FortiGate SD-WAN, multi-site L2/L3 design, AWS Associate.';
+        } else {
+          aiOutput.textContent = 'Demo: connect this widget to a secure server-side AI endpoint to enable full responses.';
+        }
+      });
+    }
+
+    /* --- Accessibility: keyboard shortcut to open AI (Ctrl/Cmd+K) --- */
+    addEventListener('keydown', (ev)=>{
+      if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase() === 'k'){ ev.preventDefault(); aiPanel.classList.toggle('show'); aiPanel.setAttribute('aria-hidden', aiPanel.classList.contains('show') ? 'false':'true'); }
+    });
+
+    /* --- Minor: ensure resume download link points to packaged name (user can replace) --- */
+    const resumeLinks = document.querySelectorAll('#download-resume, #resume-link');
+    resumeLinks.forEach(a=>{
+      // If file exists next to index.html, this will download. If not, user should replace with correct path.
+      a.setAttribute('href', 'SYED MUHAMMAD ABDULLAH-Resume.pdf');
+    });
+
+    /* --- End of IIFE --- */
+  })();
+  </script>
+</body>
+</html>

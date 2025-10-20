@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Imran Kashif — Professional Portfolio</title>
+<meta name="description" content="Portfolio of Imran Kashif — Key Account Manager. CV, experience, education, skills and a local assistant.">
+<style>
+  /* === Palette & reset === */
+  :root{
+    --bg-dark:#071026; --panel:#0f2033; --muted:#9fb1c8; --text:#ebf5ff;
+    --accent:#ffc857; --accent-2:#1f6feb; --glass:rgba(255,255,255,0.03);
+    --radius:14px; --shadow:0 14px 36px rgba(2,8,23,0.6); --gap:20px;
+  }
+  [data-theme="light"]{
+    --bg-dark:#f5f8fc; --panel:#ffffff; --muted:#617489; --text:#071026;
+    --accent:#2b6df6; --accent-2:#ffc857; --glass:rgba(2,6,23,0.04); --shadow:0 10px 28px rgba(12,18,33,0.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+  a{color:inherit}
+  body{background:radial-gradient(1200px 600px at 10% 10%, rgba(31,107,235,0.06), transparent),
+                radial-gradient(1000px 500px at 95% 90%, rgba(255,200,87,0.04), transparent),
+                var(--bg-dark); color:var(--text); min-height:100vh; display:flex; flex-direction:column;}
+
+  /* === layout === */
+  .app{display:flex; gap:var(--gap); padding:22px; width:100%; flex:1}
+  aside.sidebar{
+    width:280px; background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 85%, transparent), var(--panel));
+    border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; min-height:calc(100vh - 44px);
+    position:relative; overflow:hidden;
+  }
+  .brand{display:flex; gap:12px; align-items:center}
+  .avatar{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#081026;font-weight:900;font-size:18px;box-shadow:0 8px 20px rgba(0,0,0,0.18)}
+  .name{font-weight:800}
+  .role{font-size:13px;color:var(--muted)}
+
+  nav.nav{margin-top:18px; display:flex; flex-direction:column; gap:8px}
+  .nav-btn{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;border:0;background:transparent;color:var(--text);cursor:pointer;font-weight:700; text-align:left}
+  .nav-btn:hover{background:var(--glass); transform:translateX(6px)}
+  .nav-btn svg{width:18px;height:18px;opacity:0.9}
+  .nav-btn.active{background:linear-gradient(90deg, rgba(255,200,87,0.08), rgba(31,107,235,0.02)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02)}
+
+  .sidebar-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .theme-toggle{width:64px;height:30px;border-radius:999px;background:var(--glass);position:relative;padding:4px;cursor:pointer}
+  .knob{position:absolute;left:6px;top:4px;width:22px;height:22px;border-radius:50%;background:var(--panel);transition:left .28s, background .28s}
+  [data-theme="light"] .knob{left:36px}
+
+  /* animated background orbs within sidebar */
+  .orb{position:absolute;border-radius:999px;filter:blur(18px);opacity:0.12;pointer-events:none}
+  .orb.o1{width:220px;height:220px;background:linear-gradient(180deg,var(--accent),transparent);right:-40px;top:-30px}
+  .orb.o2{width:140px;height:140px;background:linear-gradient(180deg,var(--accent-2),transparent);left:-40px;bottom:-20px;opacity:0.08}
+
+  /* === main area === */
+  main.main{flex:1; min-height:calc(100vh - 44px); overflow:auto; padding-bottom:28px}
+  .panel{display:none; opacity:0; transform:translateY(10px); transition:opacity .36s, transform .36s}
+  .panel.active{display:block; opacity:1; transform:none}
+
+  /* container card that's equal height across tabs */
+  .card-wrap{background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 98%, transparent), var(--panel)); border-radius:16px; padding:22px; box-shadow:var(--shadow); min-height:calc(100vh - 140px); display:flex; flex-direction:column;}
+  /* ensures main content area remains consistent height on all panels: min-height based on viewport minus sidebar padding */
+
+  header.hero{display:flex; gap:20px; align-items:flex-start; justify-content:space-between}
+  .hero-left{max-width:720px}
+  .headline{font-size:28px;margin:0}
+  .sub{color:var(--muted); margin-top:8px}
+
+  .cta{display:flex;gap:12px;margin-top:12px}
+  .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+  .btn.primary{background:var(--accent); color:#081026}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04); color:var(--text)}
+
+  /* === layout columns === */
+  .two-col{display:grid; grid-template-columns: 1fr 360px; gap:18px; margin-top:18px; align-items:start}
+  @media (max-width:980px){ .two-col{grid-template-columns:1fr} .sidebar{width:100%;height:auto;min-height:unset;display:flex;flex-direction:row;align-items:center;padding:12px} .app{flex-direction:column;padding:12px} }
+
+  /* === visuals & filler when content is short === */
+  .visual-holder{display:flex;flex-direction:column;gap:12px;align-items:stretch; justify-content:center}
+  .promo-visual{width:100%;height:220px;border-radius:12px; background:
+    linear-gradient(180deg, rgba(255,200,87,0.06), rgba(31,107,235,0.04));
+    display:flex; align-items:center; justify-content:center; color:var(--text); font-weight:700; box-shadow:0 12px 30px rgba(2,8,23,0.25)}
+  .info-card{background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, transparent), transparent); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
+  .icon-row{display:flex; gap:10px; margin-top:12px}
+  .kpi{flex:1;padding:10px;border-radius:10px;background:var(--glass); text-align:center}
+
+  /* === slider === */
+  .slider{margin-top:12px}
+  .slides{display:flex; gap:12px; transition:transform .45s cubic-bezier(.2,.9,.3,1)}
+  .slide{min-width:260px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
+  .controls{display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:10px}
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.06);cursor:pointer}
+  .dot.active{background:var(--accent)}
+
+  /* === AI assistant === */
+  .ai-area{margin-top:10px; display:flex; gap:12px; flex-direction:column}
+  .messages{min-height:160px; max-height:280px; overflow:auto; padding:10px; border-radius:10px; background:var(--glass)}
+  .msg{padding:8px;border-radius:8px;margin-bottom:8px;max-width:86%}
+  .msg.user{background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));align-self:flex-end}
+  .msg.bot{background:rgba(0,0,0,0.38);align-self:flex-start;color:#fff}
+
+  /* === contact === */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+  .contact-grid input, .contact-grid textarea{width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text)}
+  @media (max-width:640px){ .contact-grid{grid-template-columns:1fr} .promo-visual{height:160px} .card-wrap{min-height:calc(100vh - 160px)} }
+
+  /* subtle motion for visual elements */
+  @keyframes floaty { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
+  .promo-visual{animation:floaty 6s ease-in-out infinite}
+  .kpi{animation:floaty 5s ease-in-out infinite; animation-delay:-0.6s}
+
+  /* small utilities */
+  .muted{color:var(--muted);font-size:13px}
+  .small{font-size:13px;color:var(--muted)}
+  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .download{display:inline-flex;align-items:center;gap:8px}
+</style>
+</head>
+<body data-theme="dark">
+<div class="app" id="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+
+    <div class="brand">
+      <div class="avatar">IK</div>
+      <div>
+        <div class="name">Imran Kashif</div>
+        <div class="role">Key Account Manager</div>
+      </div>
+    </div>
+
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <button class="nav-btn active" data-target="overview" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5L12 4l9 7.5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="nav-btn" data-target="experience">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.6"/></svg>
+        <span>Experience</span>
+      </button>
+      <button class="nav-btn" data-target="education">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3L3 7l9 4 9-4-9-4z" stroke-width="1.6"/></svg>
+        <span>Education</span>
+      </button>
+      <button class="nav-btn" data-target="skills">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20" stroke-width="1.6"/><path d="M5 7h14" stroke-width="1.6"/></svg>
+        <span>Skills</span>
+      </button>
+      <button class="nav-btn" data-target="ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v4" stroke-width="1.6"/><path d="M8 7v4" stroke-width="1.6"/><rect x="6" y="11" width="12" height="10" rx="2" stroke-width="1.6"/></svg>
+        <span>Assistant</span>
+      </button>
+      <button class="nav-btn" data-target="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke-width="1.6"/><path d="M3 8l9 6 9-6" stroke-width="1.6"/></svg>
+        <span>Contact</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" tabindex="0" title="Toggle theme">
+        <div class="knob" id="knob"></div>
+      </div>
+
+      <div style="text-align:right">
+        <div class="small">+92 300 8489740</div>
+        <div class="small" style="margin-top:6px"><a href="mailto:mohammadmir111@gmail.com" style="color:var(--muted)">mohammadmir111@gmail.com</a></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main">
+    <!-- OVERVIEW -->
+    <section id="overview" class="panel active" aria-labelledby="ovTitle">
+      <div class="card-wrap" role="region" aria-labelledby="ovTitle">
+        <div class="top-row">
+          <div>
+            <h1 id="ovTitle" class="headline">Imran Kashif — Key Account Manager</h1>
+            <div class="small">Experienced enterprise sales & account management professional — ICT & logistics domains</div>
+            <div class="cta" style="margin-top:12px">
+              <button class="btn primary" data-target="experience">View Experience</button>
+              
+              <a class="btn ghost" id="download-resume" href="Imran Kashif Resume Dt170525-6 (1).pdf" download>Download CV</a>
+            </div>
+          </div>
+          <div style="min-width:260px">
+            <div class="info-card">
+              <div style="font-weight:800">Location</div>
+              <div class="small" style="margin-top:6px">Lahore, Pakistan</div>
+              <div style="margin-top:10px;font-weight:800">Certifications</div>
+              <div class="small" style="margin-top:6px">Fortinet NSE Associate 1</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:18px; align-items:start;">
+          <div>
+            <h3 style="margin-top:0">Profile summary</h3>
+            <p class="small" style="color:var(--muted);line-height:1.5">
+              Senior Key Account Manager with a strong track record in enterprise sales, receivable recovery and client retention. Comfortable coordinating cross-functional teams to deliver ICT and logistics solutions.
+            </p>
+
+            <h3 style="margin-top:18px">Selected achievements</h3>
+            <div class="slider card">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                <strong>Highlights</strong>
+                <div class="controls">
+                  <button id="prevSlide" title="Previous">◀</button>
+                  <button id="nextSlide" title="Next">▶</button>
+                </div>
+              </div>
+              <div class="slides" id="slides">
+                <div class="slide"><strong>Recovered PKR 12M</strong><div class="small" style="margin-top:6px;color:var(--muted)">Recovered PKR 12,000,000 out of PKR 20,000,000 from Allied Rental Modarba.</div></div>
+                <div class="slide"><strong>Enterprise Accounts — Supernet</strong><div class="small" style="margin-top:6px;color:var(--muted)">Managed corporate clients; delivered incremental monthly & quarterly revenue.</div></div>
+                <div class="slide"><strong>PTCL — Corporate Sales</strong><div class="small" style="margin-top:6px;color:var(--muted)">Worked on receivable reductions and client retention measures.</div></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px" id="dots"></div>
+            </div>
+
+            <h3 style="margin-top:18px">Core responsibilities</h3>
+            <ul class="small" style="color:var(--muted);margin-top:8px">
+              <li>Account & relationship management, client communications</li>
+              <li>Sales strategy & KPI delivery, receivable reduction</li>
+              <li>ICT solutions sales (Cloud, Firewalls, MPLS, Bandwidth)</li>
+            </ul>
+          </div>
+
+          <aside>
+            <div aria-hidden="true">
+                <img class="promo-visual" src="business insights .jpeg" alt="Profile" />
+            </div>
+
+            <div style="margin-top:12px" class="info-card">
+              <strong>Quick stats</strong>
+              <div class="icon-row" style="margin-top:10px">
+                <div class="kpi"><div style="font-weight:800">MBA</div><div class="small">Forman Christian College</div></div>
+                <div class="kpi"><div style="font-weight:800">BBA</div><div class="small">University of Lahore</div></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="panel" aria-labelledby="expTitle">
+      <div class="card-wrap">
+        <div class="top-row">
+          <h2 id="expTitle">Professional Experience</h2>
+          <div class="small">Structured & measurable performance</div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap">
+          <div style="flex:1; min-width:320px">
+            <!-- EXP LIST -->
+            <div class="info-card" style="margin-bottom:12px">
+              <div style="font-weight:800">Jan 10, 2022 — Present</div>
+              <div class="small">Key Account Manager — Supernet Limited (Telecard Group), Lahore</div>
+              <ul class="small" style="color:var(--muted);margin-top:8px">
+                <li>Manage enterprise accounts; ensure monthly & quarterly targets.</li>
+                <li>Receivable reduction and ICT solutions delivery.</li>
+              </ul>
+            </div>
+
+            <div class="info-card" style="margin-bottom:12px">
+              <div style="font-weight:800">Feb 04, 2020 — Dec 31, 2021</div>
+              <div class="small">Key Account Executive — PTCL-Etisalat</div>
+              <ul class="small" style="color:var(--muted);margin-top:8px">
+                <li>Corporate account management; receivable improvements.</li>
+              </ul>
+            </div>
+
+            <div class="info-card" style="margin-bottom:12px">
+              <div style="font-weight:800">Sep 2018 — Jan 31, 2020</div>
+              <div class="small">Business Coordinator — Allied Rental Modarba (Caterpillar)</div>
+              <ul class="small" style="color:var(--muted);margin-top:8px">
+                <li>Invoicing & recovery — recovered PKR 12M of PKR 20M.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="min-width:280px; width:320px">
+           <div aria-hidden="true">
+                <img class="promo-visual" src="client profile.jpg" alt="Profile" />
+            </div>
+            <div style="margin-top:12px" class="info-card">
+              <strong>Responsibilities</strong>
+              <div class="small" style="margin-top:8px;color:var(--muted)">
+                Sales strategy, BTL activities, SKU reporting, churn mitigation, and cross-functional coordination.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="panel" aria-labelledby="eduTitle">
+      <div class="card-wrap">
+        <div class="top-row">
+          <h2 id="eduTitle">Education</h2>
+          <div class="small">Formal qualifications</div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:18px; align-items:stretch; flex-wrap:wrap">
+          <div style="flex:1; min-width:320px">
+            <div class="info-card" style="margin-bottom:12px">
+              <strong>MBA (General Management)</strong>
+              <div class="small" style="margin-top:6px;color:var(--muted)">Forman Christian College (A Chartered University) — Graduated 2015</div>
+            </div>
+
+            <div class="info-card" style="margin-bottom:12px">
+              <strong>BBA (Marketing)</strong>
+              <div class="small" style="margin-top:6px;color:var(--muted)">The University of Lahore — Graduated 2012</div>
+            </div>
+          </div>
+
+          <div style="width:320px">
+            <div aria-hidden="true">
+                <img class="promo-visual" src="acadenmic.jpg" alt="Profile" />
+            </div>
+            <div style="margin-top:12px" class="info-card">
+              <strong>Continuous Learning</strong>
+              <div class="small" style="margin-top:8px;color:var(--muted)">Certifications: Fortinet NSE Associate 1; training in sales & logistics workflows.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="panel" aria-labelledby="skillsTitle">
+      <div class="card-wrap">
+        <div class="top-row">
+          <h2 id="skillsTitle">Skills & Tools</h2>
+          <div class="small">Domain & technical awareness</div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:18px; align-items:stretch; flex-wrap:wrap">
+          <div style="flex:1; min-width:320px">
+            <div class="info-card">
+              <strong>Core skills</strong>
+              <ul class="small" style="color:var(--muted); margin-top:8px">
+                <li>Account & relationship management</li>
+                <li>Sales strategy & KPI delivery</li>
+                <li>Receivable recovery & reporting</li>
+                <li>Client communications & conflict resolution</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="width:320px">
+            <div aria-hidden="true">
+                <img class="promo-visual" src="crm.jpeg" alt="Profile" />
+            </div>
+            <div style="margin-top:12px" class="info-card">
+              <strong>Familiar</strong>
+              <div class="small" style="margin-top:8px;color:var(--muted)">Windows & Windows Server basics, MS Excel reporting, CRM workflows.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI assistant (local only) -->
+    <section id="ai" class="panel" aria-labelledby="aiTitle">
+      <div class="card-wrap">
+        <div class="top-row">
+          <h2 id="aiTitle">Assistant (Local)</h2>
+          <div class="small">No external API — canned, resume-aware responses</div>
+        </div>
+
+        <div class="ai-area">
+          <div class="messages" id="messages" aria-live="polite"></div>
+
+          <form id="aiForm" class="ai-form" onsubmit="return false;">
+            <textarea id="prompt" rows="2" placeholder='Ask: "Summarize experience", "Write a short cover note", "Key achievements"'></textarea>
+            <div style="display:flex;gap:8px;margin-top:6px">
+              <button class="btn primary" id="sendBtn" type="button">Ask</button>
+              <button class="btn ghost" id="clearBtn" type="button">Clear</button>
+            </div>
+          </form>
+          <div class="small">Examples: "Short cover note for job application", "Two-line LinkedIn bio", "Highlight recovery achievement"</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="panel" aria-labelledby="conTitle">
+      <div class="card-wrap">
+        <div class="top-row">
+          <h2 id="conTitle">Contact</h2>
+          <div class="small">Get in touch</div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start;">
+          <div style="flex:1; min-width:320px">
+            <div class="info-card">
+              <strong>Address</strong>
+              <div class="small" style="margin-top:6px;color:var(--muted)">H#44 E/2 Sector A IEP Engineers Town Defence Road, Lahore</div>
+              <div style="margin-top:8px" class="small">Phone: <a href="tel:+923008489740" style="color:var(--muted)">+92 300 8489740</a></div>
+              <div style="margin-top:6px" class="small">Email: <a href="mailto:mohammadmir111@gmail.com" style="color:var(--muted)">mohammadmir111@gmail.com</a></div>
+            </div>
+
+            <div style="margin-top:12px" class="info-card">
+              <strong>Send message</strong>
+              <div class="contact-grid" style="margin-top:8px">
+                <input id="cname" placeholder="Your name">
+                <input id="cemail" placeholder="Your email">
+                <textarea id="cmsg" placeholder="Message" style="grid-column:1/ -1"></textarea>
+              </div>
+              <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end">
+                <button class="btn ghost" id="resetContact">Reset</button>
+                <button class="btn primary" id="sendContact">Send</button>
+              </div>
+              <div id="contactNote" class="small" style="margin-top:10px;color:var(--muted)"></div>
+            </div>
+          </div>
+
+          <div style="width:320px">
+             <div aria-hidden="true">
+                <img class="promo-visual" src="lets connect.jpg" alt="Profile" />
+            </div>
+            <div class="info-card" style="margin-top:12px">
+              <strong>Availability</strong>
+              <div class="small" style="margin-top:6px;color:var(--muted)">Open to opportunities — references available on request.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ==============================
+   Data & small helpers (resume)
+   ============================== */
+const resume = {
+  name: "Imran Kashif",
+  email: "mohammadmir111@gmail.com",
+  phone: "+92 300 8489740",
+  location: "Lahore, Pakistan",
+  achievements: [
+    "Recovered PKR 12M out of PKR 20M at Allied Rental Modarba",
+    "Managed enterprise accounts and delivered incremental revenue at Supernet",
+    "Improved receivable processes and reduced churn at PTCL-Etisalat"
+  ]
+};
+
+/* ==============================
+   Theme toggle
+   ============================== */
+const body = document.body;
+const themeToggle = document.getElementById('themeToggle');
+const stored = localStorage.getItem('theme') || 'dark';
+body.setAttribute('data-theme', stored);
+themeToggle.setAttribute('aria-checked', stored==='light' ? 'true' : 'false');
+themeToggle.addEventListener('click', ()=>{
+  const next = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  themeToggle.setAttribute('aria-checked', next==='light' ? 'true' : 'false');
+});
+
+/* ==============================
+   Navigation (single-window SPA)
+   ============================== */
+const navBtns = Array.from(document.querySelectorAll('.nav-btn'));
+const panels = Array.from(document.querySelectorAll('.panel'));
+function switchTo(id){
+  navBtns.forEach(b => b.classList.toggle('active', b.dataset.target === id));
+  panels.forEach(p => {
+    if(p.id === id){ p.classList.add('active'); p.scrollTop = 0; }
+    else p.classList.remove('active');
+  });
+  // ensure equal height card-wraps recalculated after switch
+  setTimeout(adjustCardMinHeight, 80);
+}
+navBtns.forEach(b => b.addEventListener('click', ()=> switchTo(b.dataset.target)));
+Array.from(document.querySelectorAll('[data-target]')).forEach(el => el.addEventListener('click', ()=> switchTo(el.dataset.target)));
+
+/* Ensure main card-wrap min-height equals viewport minus offsets for consistent section size */
+function adjustCardMinHeight(){
+  const cardWraps = document.querySelectorAll('.card-wrap');
+  // compute available height: viewport minus top/bottom padding (approx)
+  const avail = Math.max(window.innerHeight - 140, 420);
+  cardWraps.forEach(c => c.style.minHeight = avail + 'px');
+}
+window.addEventListener('resize', adjustCardMinHeight);
+adjustCardMinHeight();
+
+/* ==============================
+   Slider (simple, CSS + JS)
+   ============================== */
+const slidesWrap = document.getElementById('slides');
+const slides = Array.from(slidesWrap.children);
+const dotsWrap = document.getElementById('dots');
+let idx = 0;
+function renderDots(){
+  dotsWrap.innerHTML = '';
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===idx ? ' active' : '');
+    d.addEventListener('click', ()=> { idx = i; updateSlides(); });
+    dotsWrap.appendChild(d);
+  });
+}
+function updateSlides(){
+  const gap = 12;
+  const card = slides[0];
+  const w = card.getBoundingClientRect().width + gap;
+  slidesWrap.style.transform = `translateX(${ -idx * w }px)`;
+  renderDots();
+}
+document.getElementById('prevSlide').addEventListener('click', ()=> { idx = (idx - 1 + slides.length) % slides.length; updateSlides(); });
+document.getElementById('nextSlide').addEventListener('click', ()=> { idx = (idx + 1) % slides.length; updateSlides(); });
+window.addEventListener('load', updateSlides);
+
+/* ==============================
+   Local AI Assistant (rule-based)
+   ============================== */
+const messagesEl = document.getElementById('messages');
+const promptEl = document.getElementById('prompt');
+const sendBtn = document.getElementById('sendBtn');
+const clearBtn = document.getElementById('clearBtn');
+function appendMessage(text, who='bot'){
+  const d = document.createElement('div');
+  d.className = 'msg ' + (who==='user' ? 'user' : 'bot');
+  d.textContent = text;
+  messagesEl.appendChild(d);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function aiReply(prompt){
+  const p = prompt.toLowerCase();
+  if(p.includes('summary') || p.includes('summarize')) {
+    return `${resume.name} is an experienced Key Account Manager based in ${resume.location}. Strengths include enterprise sales, receivable recovery (e.g., recovered PKR 12M), and client retention. Contact: ${resume.email}`;
+  }
+  if(p.includes('cover') || p.includes('cover note') || p.includes('cover letter')) {
+    return `Short cover note:\n\nDear Hiring Manager,\n\nI am Imran Kashif, an experienced Key Account Manager with a demonstrated track record in enterprise sales and receivable recovery. I would welcome the opportunity to discuss how I can add value to your team.\n\nSincerely,\nImran`;
+  }
+  if(p.includes('achiev') || p.includes('12m') || p.includes('recovery')) {
+    return `Notable achievement: Recovered PKR 12,000,000 out of PKR 20,000,000 at Allied Rental Modarba — strong recovery & stakeholder coordination.`;
+  }
+  if(p.includes('skills') || p.includes('strength')) {
+    return `Key strengths: Account management, sales strategy, receivable reduction, reporting, client communication, ICT awareness.`;
+  }
+  const fallback = [
+    'Try: "Summarize experience", "Write a short cover note", or "Key achievements".',
+    'Ask: "Two-line LinkedIn summary" or "Format a short email introduction".'
+  ];
+  return fallback[Math.floor(Math.random()*fallback.length)];
+}
+sendBtn.addEventListener('click', ()=> {
+  const text = promptEl.value.trim();
+  if(!text) return;
+  appendMessage(text, 'user');
+  promptEl.value = '';
+  appendMessage('Thinking...', 'bot');
+  setTimeout(()=> {
+    const bots = Array.from(messagesEl.querySelectorAll('.msg.bot'));
+    if(bots.length) bots[bots.length-1].remove();
+    appendMessage(aiReply(text), 'bot');
+  }, 650);
+});
+clearBtn.addEventListener('click', ()=> { messagesEl.innerHTML = ''; });
+
+/* ==============================
+   Contact (simulated)
+   ============================== */
+document.getElementById('sendContact').addEventListener('click', ()=> {
+  const name = document.getElementById('cname').value.trim();
+  const email = document.getElementById('cemail').value.trim();
+  const msg = document.getElementById('cmsg').value.trim();
+  const note = document.getElementById('contactNote');
+  if(!name || !email || !msg){ note.textContent = 'Please fill all fields.'; note.style.color='tomato'; return; }
+  note.textContent = 'Message simulated as sent. To enable real messages, connect a backend or email service.';
+  note.style.color='var(--muted)';
+  document.getElementById('cname').value=''; document.getElementById('cemail').value=''; document.getElementById('cmsg').value='';
+});
+document.getElementById('resetContact').addEventListener('click', ()=> {
+  document.getElementById('cname').value=''; document.getElementById('cemail').value=''; document.getElementById('cmsg').value='';
+  document.getElementById('contactNote').textContent='';
+});
+
+/* ==============================
+   Download CV (attempts to download resume.pdf placed next to this file)
+   If resume.pdf not present, prompt user to place it beside index.html.
+   ============================== */
+document.getElementById('downloadCvBtn').addEventListener('click', ()=> {
+  // Attempt to download resume.pdf from same folder
+  const link = document.createElement('a');
+  link.href = 'resume.pdf';
+  link.download = 'Imran_Kashif_Resume.pdf';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=> {
+    alert('If download did not start, please put the resume PDF named "resume.pdf" in the same folder as this HTML file.');
+  }, 300);
+});
+
+/* ==============================
+   Small UI niceties: keyboard 1-6 shortcuts
+   ============================== */
+window.addEventListener('keydown', (e)=>{
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if(e.key>='1' && e.key<='6') {
+    const idx = parseInt(e.key,10)-1;
+    if(navBtns[idx]) navBtns[idx].click();
+  }
+});
+
+/* initial small animation for sidebar buttons */
+navBtns.forEach((b,i) => { b.style.opacity = 0; setTimeout(()=> b.style.opacity = 1, 120 * i); });
+
+</script>
+</body>
+</html>
