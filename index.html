@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="description" content="Web developer portfolio showcasing my skills and projects.">
+    <meta name="keywords" content="web developer, portfolio, frontend, HTML, CSS, JavaScript">
+    <meta name="author" content="Your Name">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio || Zahra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="images/FAV.png" type="image/x-icon" style="height: 30PX; width: 30PX;">
+
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+</head>
+
+<body>
+    <div id="loader" class="loader"></div>
+
+    <!-- header -->
+    <header class="header">
+        <a href="#" class="logo">ZK</a>
+        <i class="far fa-bars" id="menu-icon"></i>
+
+        <nav class="navbar">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+
+            <a href="#services">Skillset</a>
+            <a href="#skills">Expertise</a>
+            <a href="#portfolio">Projects</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+
+    <!-- HOME SECTION -->
+    <section class="home d-flex align-items-center position-relative overflow-hidden" id="home">
+        <div class="bubbles"></div>
+
+        <div class="container">
+            <div class="row align-items-center flex-column-reverse flex-md-row text-center text-md-start">
+                <div class="col-md-6 mt-4 mt-md-0">
+                    <h1 class="mb-3 fw-bold" style="font-size: 26px;">Hi, I'm <span class="typing-effect"></span></h1>
+                    <h1 class="mb-3 text-secondary" style="font-size: 26px;">Code, Create, Conquer</h1>
+                    <p class="mb-4" style="font-size: 15px;">Turning ideas into reality through passion and innovation.
+                        Let’s create something extraordinary together!</p>
+                    <!-- <div class="d-flex gap-3 justify-content-center justify-content-md-start">
+                        <a href="#contact" class="btn btn-primary px-4 py-2">Hire Me</a>
+                        <a href="#portfolio" class="btn btn-outline-primary px-4 py-2">View Projects</a>
+                    </div> -->
+                    <div class="social-media">
+
+                        <a href="https://github.com/xahrakhaliqferoz"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/zahra-khaliq-650997346/"><i
+                                class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="images/zahrakhaliq.png" alt="Frontend Developer Graphic" class="img-fluid hero-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ABOUT ME SECTION -->
+    <section class="about" id="about">
+        <div class="about-container">
+
+            <h2 class="heading">About <span style="color: var(--main-color);">Me</span></h2>
+            <p class="about-description">Hi, I'm a passionate <strong>Frontend Developer</strong>
+                specializing in creating visually appealing and responsive websites. With expertise in HTML, CSS,
+                JavaScript, and
+                frameworks like Bootstrap, I craft dynamic, user-friendly websites that stand out.</p>
+
+            <p class="about-description">In addition to frontend development, I also work with platforms like WordPress
+                and Wix and have experience in deploying
+                websites to ensure seamless online presence. I stay current with design trends and focus on providing
+                smooth, intuitive
+                user experiences.</p>
+
+            <p class="about-description">Outside of coding, I enjoy exploring creative projects and collaborating with
+                fellow developers. Let’s connect and build
+                something amazing together!</p>
+
+            <div class="d-flex justify-content-center align-items-center">
+                <a href="#contact" class="button">Get In Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+
+    <section id="education" style="background-color: var(--bg-color); padding: 4rem 2rem; color: var(--text-color);">
+        <div class="container" style="max-width: 900px; margin: auto; position: relative;">
+            <h2 style="color: var(--main-color); font-size: 2.5rem; text-align: center; margin-bottom: 4rem;">Education
+            </h2>
+
+            <div class="timeline">
+                <div class="timeline-line"></div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Bachelor of Science in Information Technology</h3>
+                        <p class="school">University Of The Punjab</p>
+                        <span class="date">2019 - 2023</span>
+                        <!-- <p>Brief description about coursework, achievements, or projects you completed during your
+                            degree.
+                        </p> -->
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fsc Pre Engineering</h3>
+                        <p class="school">Punjab Group of Colleges</p>
+                        <span class="date">2017 - 2019</span>
+
+                    </div>
+                </div>
+
+                <!-- Add more timeline items as needed -->
+            </div>
+
+        </div>
+    </section>
+    <!-- AOS Animation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+    </script>
+    <!-- services -->
+    <section class="services" id="services">
+        <h2 class="heading"><span>Frontend</span> Skillset</h2>
+        <div class="services-container">
+            <div class="services-grid">
+
+                <div class="services-card">
+                    <i class="fas fa-paint-brush text-success"></i>
+                    <h3>UI/UX Development</h3>
+                    <p>Crafting intuitive, user-focused interfaces with a focus on accessibility and usability.</p>
+                </div>
+
+                <div class="services-card">
+                    <i class="fas fa-code text-warning"></i>
+                    <h3>HTML/CSS/JS Integration</h3>
+                    <p>Converting designs into responsive, clean, and functional frontend code.</p>
+                </div>
+
+                <div class="services-card">
+                    <i class="fas fa-laptop-code text-primary"></i>
+                    <h3>Responsive Web Design</h3>
+                    <p>Designing layouts that adapt beautifully to all devices using Bootstrap and CSS.</p>
+                </div>
+
+                <div class="services-card">
+                    <i class="fas fa-layer-group text-info"></i>
+                    <h3>Component-Based Layouts</h3>
+                    <p>Creating reusable, modular HTML & CSS components with Sass and Bootstrap.</p>
+                </div>
+
+                <div class="services-card">
+                    <i class="fas fa-tools text-danger"></i>
+                    <h3>Cross-Browser Compatibility</h3>
+                    <p>Ensuring smooth, consistent design and behavior across all major browsers.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- skills -->
+    <section class="skills" id="skills">
+        <h2 class="heading text-center mb-5">
+            <span>Crafted </span><span style="color: var(--main-color);">Expertise</span>
+        </h2>
+
+        <div class="skills-filter text-center mb-4">
+            <button class="btn btn-outline filter-btn active" data-filter="all">All</button>
+            <button class="btn btn-outline filter-btn" data-filter="frontend">Frontend</button>
+            <button class="btn btn-outline filter-btn" data-filter="tools">Tools</button>
+            <button class="btn btn-outline filter-btn" data-filter="other">Other</button>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-center gap-4">
+                <!-- FRONTEND SKILLS -->
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-html5"></i>
+                    <h3 class="text-orange">HTML5</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-css3-alt"></i>
+                    <h3 class="text-primary">CSS3</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-js-square"></i>
+                    <h3 class="text-warning">JavaScript</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-bootstrap"></i>
+                    <h3 class="text-purple">Bootstrap</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-sass"></i>
+                    <h3 class="text-pink">Sass</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fas fa-cube"></i>
+                    <h3 class="text-indigo">Odoo</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fab fa-wordpress"></i>
+                    <h3 class="text-blue">WordPress</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fas fa-globe"></i>
+                    <h3 class="text-dark">Wix</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box frontend" data-sr-id>
+                    <i class="fas fa-code"></i>
+                    <h3 class="text-success">Responsive Design</h3>
+                </div>
+
+                <!-- TOOLS -->
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box tools" data-sr-id>
+                    <i class="fab fa-git-alt"></i>
+                    <h3 class="text-danger">Git & GitHub</h3>
+                </div>
+
+                <!-- OTHER -->
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box other" data-sr-id>
+                    <i class="fas fa-coffee"></i>
+                    <h3 class="text-brown">Java</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box other" data-sr-id>
+                    <i class="fas fa-file-code"></i>
+                    <h3 class="text-teal">XML</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box other" data-sr-id>
+                    <i class="fas fa-database"></i>
+                    <h3 class="text-warning">Firebase</h3>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 skills-box other" data-sr-id>
+                    <i class="fas fa-paper-plane"></i>
+                    <h3 class="text-danger">Postman API</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTFOLIO SECTION DESIGN -->
+    <section class="portfolio" id="portfolio">
+        <h2 class="heading">Latest <span>Projects</span></h2>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Service line -->
+        <div class="service-line" data-target="web-devone-content">
+            <span>European Collision Center (ECC)</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+        <!-- seond -->
+        <div class="service-line" data-target="web-devtwo-content">
+            <span>Hulppa Customization</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+        <!-- 3rd -->
+        <div class="service-line" data-target="web-devthree-content">
+            <span>WorkConnect</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+        <!-- 4rth -->
+        <div class="service-line" data-target="web-devfour-content">
+            <span>Personal Portfolio</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+        <!-- fift -->
+        <div class="service-line" data-target="web-devfive-content">
+            <span>PickByClick</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+        <!-- sixth -->
+        <div class="service-line" data-target="web-devsix-content">
+            <span>Axiom World Website (Replica)</span>
+            <svg class="arrow-icon" viewBox="0 0 64 64">
+                <path
+                    d="M37.38 12.55a2 2 0 0 0-2.83.07 2 2 0 0 0 .07 2.83L49.9 30H10a2 2 0 0 0 0 4h39.9L34.62 48.55a2 2 0 1 0 2.76 2.89l17.45-16.62a4 4 0 0 0 0-5.66L37.38 12.55z" />
+            </svg>
+        </div>
+
+        <!-- Inner content -->
+        <div class="inner-content" id="web-devone-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                A replica version of the Axiom World corporate website created using WordPress for a responsive
+                and functional design.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-brands fa-wordpress"></i> WordPress
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-html5"></i> HTML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-css3-alt"></i> CSS
+            </div>
+        </div>
+        <!-- second -->
+        <div class="inner-content" id="web-devtwo-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                Customized website development on Odoo platform using Bootstrap, XML, and Sass technologies.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-brands fa-bootstrap"></i> Bootstrap
+            </div>
+            <div class="tech-stack">
+                <i class="fa-solid fa-code"></i> XML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-sass"></i> Sass
+            </div>
+        </div>
+        <!-- third -->
+        <div class="inner-content" id="web-devthree-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                A corporate-style communication website developed with HTML, CSS, JavaScript, and Bootstrap.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-brands fa-html5"></i> HTML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-css3-alt"></i> CSS
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-js"></i> JavaScript
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-bootstrap"></i> Bootstrap
+            </div>
+        </div>
+        <!-- four -->
+        <div class="inner-content" id="web-devfour-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                A sleek and creative personal portfolio showcasing projects and skills using Sass and Bootstrap.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-brands fa-html5"></i> HTML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-sass"></i> Sass
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-js"></i> JavaScript
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-bootstrap"></i> Bootstrap
+            </div>
+        </div>
+        <!-- five -->
+        <div class="inner-content" id="web-devfive-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                IoT-based smart picking system using Arduino coding and Android application integrated with
+                Firebase.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-solid fa-microchip"></i> Arduino
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-android"></i> Android Studio
+            </div>
+            <div class="tech-stack">
+                <i class="fa-solid fa-code"></i> XML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-java"></i> Java
+            </div>
+            <div class="tech-stack">
+                <i class="fa-solid fa-database"></i> Firebase
+            </div>
+        </div>
+
+        <!-- six -->
+        <div class="inner-content" id="web-devsix-content">
+            <div class="close-btn">&times;</div>
+            <p>
+                A replica version of the Axiom World corporate website created using WordPress for a responsive
+                and functional design.
+            </p>
+            <div class="tech-stack">
+                <i class="fa-brands fa-wordpress"></i> WordPress
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-html5"></i> HTML
+            </div>
+            <div class="tech-stack">
+                <i class="fa-brands fa-css3-alt"></i> CSS
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact section -->
+    <section class="contact" id="contact">
+        <h2 class="heading"> <span>Contact </span>Me</h2>
+
+        <form id=" contact-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="f0670e74-9d2f-4861-b7f0-8033e158e41b">
+
+            <div class="input-box">
+                <input type="text" name="name" placeholder="Full Name" required />
+                <input type="email" name="email" placeholder="Email Address" required />
+            </div>
+
+            <div class="input-box">
+                <input type="number" name="phone" placeholder="Mobile Number" required />
+                <input type="text" name="subject" placeholder="Email Subject" required />
+            </div>
+
+            <textarea name="message" cols="30" rows="10" placeholder="Your Message" required></textarea>
+            <input type="submit" value="Send Message" class="btn" />
+        </form>
+
+        <div id="success-message" class="pop-up-message"></div>
+    </section>
+    <!-- footer -->
+    <footer>
+        <ul class="social-links">
+            <li><a href="https://www.linkedin.com/in/zahra-khaliq-650997346/" target="_blank"><i
+                        class="fab fa-linkedin"></i></a></li>
+            <li><a href="https://github.com/xahrakhaliqferoz" target="_blank"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://wa.link/3c523c" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+        </ul>
+
+        <p class="footer-contact">Contact: zahrakhaliqawan@gmail.com</p>
+
+        <div class="footer-bottom">
+            <div class="footer-text">
+                <p>&copy; 2025 <span>@ZahraKhaliq</span> | All Rights Reserved.</p>
+            </div>
+            <div class="footer-iconTop">
+                <a href="#home"><i class="fas fa-angle-up"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- scroll reveal js -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <!-- Zahra Js -->
+    <script src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</body>
+
+</html>

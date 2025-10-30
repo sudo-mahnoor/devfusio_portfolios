@@ -1,0 +1,12 @@
+
+$o-user-color-palette: map-merge($o-user-color-palette, o-map-omit((
+    'o-color-1': #10217D,
+    'o-color-2': #aad5d8,
+    'o-color-3': #F7FBFB,
+    'o-color-4': #FFFFFF,
+    'o-color-5': #0D4956,
+    'o-cc1-text': #10217D,
+    'footer': 5,
+    'footer-custom': #2A346D,
+    // -- hook --
+)));
