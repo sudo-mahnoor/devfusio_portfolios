@@ -1,14 +1,18 @@
 stages:
   - deploy
 
+# Run pipeline only on deployment branches
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mahnoor_portfolio"'
+    - if: '$CI_COMMIT_BRANCH == "misbah_portfolio"'
+    - when: never
+
 # Deploy Mahnoor's Portfolio
 deploy_mahnoor:
   stage: deploy
-  only:
-    refs:
-      - mahnoor_portfolio
-    changes:
-      - mahnoor_portfolio/**/*
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mahnoor_portfolio"'
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -76,11 +80,8 @@ deploy_mahnoor:
 # Deploy Misbah's Portfolio
 deploy_misbah:
   stage: deploy
-  only:
-    refs:
-      - misbah_portfolio
-    changes:
-      - misbah_portfolio/**/*
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "misbah_portfolio"'
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
