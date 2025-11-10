@@ -11,10 +11,11 @@ workflow:
 # Deploy Mahnoor's Portfolio
 deploy_mahnoor:
   stage: deploy
+  image: alpine:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "mahnoor_portfolio"'
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add --no-cache openssh-client git curl
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -80,10 +81,11 @@ deploy_mahnoor:
 # Deploy Misbah's Portfolio
 deploy_misbah:
   stage: deploy
+  image: alpine:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "misbah_portfolio"'
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add --no-cache openssh-client git curl
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
