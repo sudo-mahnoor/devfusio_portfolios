@@ -1,0 +1,147 @@
+stages:
+  - deploy
+
+# Run pipeline only on deployment branches
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mahnoor_portfolio"'
+    - if: '$CI_COMMIT_BRANCH == "misbah_portfolio"'
+    - when: never
+
+# Deploy Mahnoor's Portfolio
+deploy_mahnoor:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mahnoor_portfolio"'
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SERVER_HOST >> ~/.ssh/known_hosts
+  script:
+    - |
+      ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+      set -e
+
+      # Variables
+      PORTFOLIO_NAME="mahnoor_portfolio"
+      TARGET_DIR="/var/www/html/mahnoor_site"
+      BACKUP_DIR="/var/www/html/backups"
+      BACKUP_PATH="$BACKUP_DIR/mahnoor_site-$(date +%Y%m%d-%H%M%S)"
+
+      # Create backup directory
+      mkdir -p $BACKUP_DIR
+
+      # Backup current deployment
+      if [ -d "$TARGET_DIR" ]; then
+        cp -r $TARGET_DIR $BACKUP_PATH
+        echo "Backup created: $BACKUP_PATH"
+      fi
+
+      # Rollback function
+      rollback() {
+        echo "Deployment failed, rolling back..."
+        if [ -d "$BACKUP_PATH" ]; then
+          rm -rf $TARGET_DIR
+          cp -r $BACKUP_PATH $TARGET_DIR
+          docker restart mahnoor-site ReverseProxy
+          echo "Rollback completed"
+        fi
+        exit 1
+      }
+
+      # Navigate and pull code
+      cd /tmp
+      git clone --single-branch --branch mahnoor_portfolio git@gitlab.aetoserp.app:web_development/devfusio_portfolios.git temp-repo || rollback
+
+      # Deploy new code
+      mkdir -p $TARGET_DIR
+      cp -r temp-repo/mahnoor_portfolio/* $TARGET_DIR/ || rollback
+
+      # Restart containers
+      docker restart mahnoor-site ReverseProxy || rollback
+
+      # Health check
+      sleep 15
+      if ! curl -f -k https://mahnoor.devfusion.tech/ > /dev/null 2>&1; then
+        echo "Health check failed"
+        rollback
+      fi
+
+      # Cleanup
+      rm -rf temp-repo
+      find $BACKUP_DIR -name "mahnoor_site-*" -type d | sort | head -n -3 | xargs rm -rf
+
+      echo "Deployment successful for $PORTFOLIO_NAME"
+      EOF
+
+# Deploy Misbah's Portfolio
+deploy_misbah:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "misbah_portfolio"'
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SERVER_HOST >> ~/.ssh/known_hosts
+  script:
+    - |
+      ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+      set -e
+
+      # Variables
+      PORTFOLIO_NAME="misbah_portfolio"
+      TARGET_DIR="/var/www/html/misbah_site"
+      BACKUP_DIR="/var/www/html/backups"
+      BACKUP_PATH="$BACKUP_DIR/misbah_site-$(date +%Y%m%d-%H%M%S)"
+
+      # Create backup directory
+      mkdir -p $BACKUP_DIR
+
+      # Backup current deployment
+      if [ -d "$TARGET_DIR" ]; then
+        cp -r $TARGET_DIR $BACKUP_PATH
+        echo "Backup created: $BACKUP_PATH"
+      fi
+
+      # Rollback function
+      rollback() {
+        echo "Deployment failed, rolling back..."
+        if [ -d "$BACKUP_PATH" ]; then
+          rm -rf $TARGET_DIR
+          cp -r $BACKUP_PATH $TARGET_DIR
+          docker restart misbah-site ReverseProxy
+          echo "Rollback completed"
+        fi
+        exit 1
+      }
+
+      # Navigate and pull code
+      cd /tmp
+      git clone --single-branch --branch misbah_portfolio git@gitlab.aetoserp.app:web_development/devfusio_portfolios.git temp-repo || rollback
+
+      # Deploy new code
+      mkdir -p $TARGET_DIR
+      cp -r temp-repo/misbah_portfolio/* $TARGET_DIR/ || rollback
+
+      # Restart containers
+      docker restart misbah-site ReverseProxy || rollback
+
+      # Health check
+      sleep 15
+      if ! curl -f -k https://misbah.devfusion.tech/ > /dev/null 2>&1; then
+        echo "Health check failed"
+        rollback
+      fi
+
+      # Cleanup
+      rm -rf temp-repo
+      find $BACKUP_DIR -name "misbah_site-*" -type d | sort | head -n -3 | xargs rm -rf
+
+      echo "Deployment successful for $PORTFOLIO_NAME"
+      EOF
