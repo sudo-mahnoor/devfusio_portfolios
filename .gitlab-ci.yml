@@ -1,26 +1,14 @@
-
 stages:
   - deploy
 
 .ssh_setup: &ssh_setup
   - apk add --no-cache openssh-client git curl
-  - eval $(ssh-agent -s)
-
-  # Handle both single-line (\n) and multiline keys safely
-  - echo "$SSH_PRIVATE_KEY" | grep -q "BEGIN" && echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key || echo "$SSH_PRIVATE_KEY" | sed 's/\\n/\n/g' > /tmp/ssh_key
-  
+  - printf '%s\n' "$SSH_PRIVATE_KEY" > /tmp/ssh_key
   - chmod 600 /tmp/ssh_key
-  - ssh-add /tmp/ssh_key
-  - rm /tmp/ssh_key
-
-  # SSH known hosts setup
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
-  - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+  - ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
 
-# =========================
-# DEPLOY MAHNOOR
-# =========================
 deploy_mahnoor:
   stage: deploy
   image: alpine:latest
@@ -33,25 +21,24 @@ deploy_mahnoor:
     - *ssh_setup
   script:
     - |
-      ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_HOST" << 'EOF'
+      ssh -i /tmp/ssh_key root@$SERVER_HOST << 'EOF'
       set -e
 
       PORTFOLIO_NAME="mahnoor_portfolio"
       TARGET_DIR="/var/www/html/$PORTFOLIO_NAME"
       BACKUP_DIR="/var/www/html/backups"
-      BACKUP_PATH="$BACKUP_DIR/${PORTFOLIO_NAME}-$(date +%Y%m%d-%H%M%S)"
+      BACKUP_PATH="$BACKUP_DIR/$PORTFOLIO_NAME-$(date +%Y%m%d-%H%M%S)"
 
-      mkdir -p "$BACKUP_DIR"
+      mkdir -p $BACKUP_DIR
 
       if [ -d "$TARGET_DIR" ]; then
-        cp -r "$TARGET_DIR" "$BACKUP_PATH"
+        cp -r $TARGET_DIR $BACKUP_PATH
       fi
 
       rollback() {
-        echo "Rolling back deployment..."
         if [ -d "$BACKUP_PATH" ]; then
-          rm -rf "$TARGET_DIR"
-          cp -r "$BACKUP_PATH" "$TARGET_DIR"
+          rm -rf $TARGET_DIR
+          cp -r $BACKUP_PATH $TARGET_DIR
           docker restart mahnoor-site ReverseProxy
         fi
         exit 1
@@ -61,8 +48,8 @@ deploy_mahnoor:
       rm -rf temp-repo
       git clone --single-branch --branch mahnoor_portfolio git@gitlab.aetoserp.app:web_development/devfusio_portfolios.git temp-repo || rollback
 
-      mkdir -p "$TARGET_DIR"
-      cp -r temp-repo/mahnoor_portfolio/* "$TARGET_DIR"/ || rollback
+      mkdir -p $TARGET_DIR
+      cp -r temp-repo/mahnoor_portfolio/* $TARGET_DIR/ || rollback
 
       docker restart mahnoor-site ReverseProxy || rollback
 
@@ -70,14 +57,11 @@ deploy_mahnoor:
       curl -f -k https://mahnoor.devfusion.tech/ > /dev/null 2>&1 || rollback
 
       rm -rf temp-repo
-      find "$BACKUP_DIR" -name "${PORTFOLIO_NAME}-*" -type d | sort | head -n -3 | xargs rm -rf || true
+      find $BACKUP_DIR -name "$PORTFOLIO_NAME-*" -type d | sort | head -n -3 | xargs rm -rf
 
-      echo "✅ Deployment successful for $PORTFOLIO_NAME"
+      echo "Deployment successful for $PORTFOLIO_NAME"
       EOF
 
-# =========================
-# DEPLOY MISBAH
-# =========================
 deploy_misbah:
   stage: deploy
   image: alpine:latest
@@ -90,25 +74,24 @@ deploy_misbah:
     - *ssh_setup
   script:
     - |
-      ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_HOST" << 'EOF'
+      ssh -i /tmp/ssh_key root@$SERVER_HOST << 'EOF'
       set -e
 
       PORTFOLIO_NAME="misbah_portfolio"
       TARGET_DIR="/var/www/html/$PORTFOLIO_NAME"
       BACKUP_DIR="/var/www/html/backups"
-      BACKUP_PATH="$BACKUP_DIR/${PORTFOLIO_NAME}-$(date +%Y%m%d-%H%M%S)"
+      BACKUP_PATH="$BACKUP_DIR/$PORTFOLIO_NAME-$(date +%Y%m%d-%H%M%S)"
 
-      mkdir -p "$BACKUP_DIR"
+      mkdir -p $BACKUP_DIR
 
       if [ -d "$TARGET_DIR" ]; then
-        cp -r "$TARGET_DIR" "$BACKUP_PATH"
+        cp -r $TARGET_DIR $BACKUP_PATH
       fi
 
       rollback() {
-        echo "Rolling back deployment..."
         if [ -d "$BACKUP_PATH" ]; then
-          rm -rf "$TARGET_DIR"
-          cp -r "$BACKUP_PATH" "$TARGET_DIR"
+          rm -rf $TARGET_DIR
+          cp -r $BACKUP_PATH $TARGET_DIR
           docker restart misbah-site ReverseProxy
         fi
         exit 1
@@ -118,8 +101,8 @@ deploy_misbah:
       rm -rf temp-repo
       git clone --single-branch --branch misbah_portfolio git@gitlab.aetoserp.app:web_development/devfusio_portfolios.git temp-repo || rollback
 
-      mkdir -p "$TARGET_DIR"
-      cp -r temp-repo/misbah_portfolio/* "$TARGET_DIR"/ || rollback
+      mkdir -p $TARGET_DIR
+      cp -r temp-repo/misbah_portfolio/* $TARGET_DIR/ || rollback
 
       docker restart misbah-site ReverseProxy || rollback
 
@@ -127,7 +110,7 @@ deploy_misbah:
       curl -f -k https://misbah.devfusion.tech/ > /dev/null 2>&1 || rollback
 
       rm -rf temp-repo
-      find "$BACKUP_DIR" -name "${PORTFOLIO_NAME}-*" -type d | sort | head -n -3 | xargs rm -rf || true
+      find $BACKUP_DIR -name "$PORTFOLIO_NAME-*" -type d | sort | head -n -3 | xargs rm -rf
 
-      echo "✅ Deployment successful for $PORTFOLIO_NAME"
+      echo "Deployment successful for $PORTFOLIO_NAME"
       EOF
