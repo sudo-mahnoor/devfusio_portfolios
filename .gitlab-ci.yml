@@ -4,7 +4,10 @@ stages:
 .ssh_setup: &ssh_setup
   - apk add --no-cache openssh-client git curl
   - eval $(ssh-agent -s)
-  - echo "$SSH_PRIVATE_KEY" | ssh-add -
+  - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key
+  - chmod 600 /tmp/ssh_key
+  - ssh-add /tmp/ssh_key
+  - rm /tmp/ssh_key
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
