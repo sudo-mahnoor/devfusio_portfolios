@@ -5,8 +5,57 @@ on:
     branches: [ "zara_portfolio" ]
 
 jobs:
-  deploy:
+  build:
+    name: Detect changes (and optional build)
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.detect.outputs.changed }}
+      build_dir: ${{ steps.set_build_dir.outputs.build_dir }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files in this push
+        id: detect
+        run: |
+          # github.event.before is the commit SHA before the push (empty on first push)
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          echo "Before: $BEFORE"
+          echo "After:  $AFTER"
+
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            # First push or branch created — treat as changed
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # list files changed in this push
+          CHANGED_FILES=$(git diff --name-only "$BEFORE" "$AFTER" || true)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set build directory output
+        id: set_build_dir
+        run: |
+          # Adjust this if your build output is in dist/ or build/
+          # For a simple static repo with files at repo root use '.'
+          echo "build_dir=." >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy to server (runs only if changes detected)
+    runs-on: ubuntu-latest
+    needs: build
+    # only run deploy when the build job detected changes
+    if: needs.build.outputs.changed == '1'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -18,17 +67,26 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
+      - name: Prepare SSH known_hosts
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          echo "known_hosts:"
+          cat ~/.ssh/known_hosts || true
+
       - name: Rsync to server
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           TARGET_DIR: ${{ secrets.TARGET_DIR }}
+          SOURCE_DIR: ${{ needs.build.outputs.build_dir }}
         run: |
+          echo "Using SOURCE_DIR=${SOURCE_DIR}"
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-
-          SOURCE_DIR="."
-          rsync -avz --delete --exclude='.git' --exclude='.github' "$SOURCE_DIR"/ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
+          rsync -avz --delete --exclude='.git' --exclude='.github' "${SOURCE_DIR}/" ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
 
       - name: Fix ownership & reload nginx
         env:
@@ -37,3 +95,13 @@ jobs:
           TARGET_DIR: ${{ secrets.TARGET_DIR }}
         run: |
           ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} "sudo chown -R www-data:www-data ${TARGET_DIR} || true; sudo systemctl reload nginx || true"
+
+  no_changes:
+    name: No changes — skip deploy
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.changed == '0'
+    steps:
+      - name: Nothing to do
+        run: |
+          echo "No changed files detected in this push. Skipping deploy."
