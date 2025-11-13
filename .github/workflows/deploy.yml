@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Detect changes (and optional build)
+    name: Detect changes & build if needed
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.detect.outputs.changed }}
@@ -20,41 +20,77 @@ jobs:
       - name: Detect changed files in this push
         id: detect
         run: |
-          # github.event.before is the commit SHA before the push (empty on first push)
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
           echo "Before: $BEFORE"
           echo "After:  $AFTER"
 
           if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            # First push or branch created — treat as changed
             echo "changed=1" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # list files changed in this push
           CHANGED_FILES=$(git diff --name-only "$BEFORE" "$AFTER" || true)
-          echo "Changed files:"
           echo "$CHANGED_FILES"
-
           if [ -z "$CHANGED_FILES" ]; then
             echo "changed=0" >> "$GITHUB_OUTPUT"
           else
             echo "changed=1" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Install Node if needed and run build / or compile SCSS
+        id: run_build
+        run: |
+          set -e
+          # Default build dir (repo root). If build produces dist/ change this below.
+          BUILD_DIR="."
+
+          # If there's a package.json, run npm ci and npm run build (if script exists)
+          if [ -f package.json ]; then
+            echo "package.json found -> running npm ci"
+            curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - || true
+            sudo apt-get update -y
+            sudo apt-get install -y nodejs build-essential || true
+            npm ci || true
+            if npm run | grep -q "build"; then
+              echo "npm build script found -> npm run build"
+              npm run build || true
+              # If build output commonly goes to 'dist' or 'build', set BUILD_DIR accordingly.
+              if [ -d dist ]; then BUILD_DIR="dist"; fi
+              if [ -d build ]; then BUILD_DIR="build"; fi
+            else
+              echo "No npm build script; skipping npm run build"
+            fi
+          fi
+
+          # If no package.json but index.scss exists, compile it to index.css
+          if [ ! -f package.json ] && [ -f index.scss ]; then
+            echo "index.scss found -> compiling with sass"
+            # install dart-sass
+            npm install -g sass || true
+            sass index.scss index.css || true
+            BUILD_DIR="."
+          fi
+
+          # export build_dir to github output
+          echo "build_dir=$BUILD_DIR" >> "$GITHUB_OUTPUT"
+          echo "Done build step. BUILD_DIR=$BUILD_DIR"
+
       - name: Set build directory output
         id: set_build_dir
         run: |
-          # Adjust this if your build output is in dist/ or build/
-          # For a simple static repo with files at repo root use '.'
-          echo "build_dir=." >> "$GITHUB_OUTPUT"
+          # The actual build_dir value comes from previous step output
+          # but keep a default fallback to '.'
+          if [ -n "${{ steps.run_build.outputs.build_dir }}" ]; then
+            echo "build_dir=${{ steps.run_build.outputs.build_dir }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "build_dir=." >> "$GITHUB_OUTPUT"
+          fi
 
   deploy:
     name: Deploy to server (runs only if changes detected)
     runs-on: ubuntu-latest
     needs: build
-    # only run deploy when the build job detected changes
     if: needs.build.outputs.changed == '1'
     steps:
       - name: Checkout repo
@@ -73,17 +109,15 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-          echo "known_hosts:"
-          cat ~/.ssh/known_hosts || true
 
-      - name: Rsync to server
+      - name: Rsync to server (deploy built files)
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           TARGET_DIR: ${{ secrets.TARGET_DIR }}
           SOURCE_DIR: ${{ needs.build.outputs.build_dir }}
         run: |
-          echo "Using SOURCE_DIR=${SOURCE_DIR}"
+          echo "Deploying from SOURCE_DIR=${SOURCE_DIR}"
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
           rsync -avz --delete --exclude='.git' --exclude='.github' "${SOURCE_DIR}/" ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
