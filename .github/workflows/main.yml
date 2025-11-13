@@ -1,0 +1,37 @@
+name: Simple Deploy
+
+on:
+  push:
+    branches: [ "zara_portfolio" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Start ssh-agent and add deploy key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Rsync to server
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
+        run: |
+          # adjust SOURCE if your site build output is in a subfolder (e.g. "dist")
+          SOURCE_DIR="."
+          rsync -avz --delete --exclude='.git' --exclude='.github' "$SOURCE_DIR"/ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
+
+      - name: Fix ownership & reload nginx
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} "sudo chown -R www-data:www-data ${TARGET_DIR} || true; sudo systemctl reload nginx || true"
