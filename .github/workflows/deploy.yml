@@ -24,7 +24,9 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           TARGET_DIR: ${{ secrets.TARGET_DIR }}
         run: |
-          # adjust SOURCE if your site build output is in a subfolder (e.g. "dist")
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
           SOURCE_DIR="."
           rsync -avz --delete --exclude='.git' --exclude='.github' "$SOURCE_DIR"/ ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
 
