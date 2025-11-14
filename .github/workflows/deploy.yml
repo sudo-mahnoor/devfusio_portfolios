@@ -199,7 +199,7 @@ jobs:
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
           rsync -avz --delete --exclude='.git' --exclude='.github' "${SOURCE_DIR}/" ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
 
-      - name: Fix ownership & reload nginx
+      - name: Fix ownership
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
