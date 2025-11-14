@@ -1,51 +1,155 @@
-name: Simple Deploy
+name: Staging → Portfolio:auto-merge & deploy to /var/www/html
 
 on:
   push:
-    branches: [ "zara_portfolio" ]
+    branches: [ "zara_staging" ]
+
+permissions:
+  contents: write      # allow pushing (GITHUB_TOKEN), but see notes below about branch protection
+  pull-requests: write
+  actions: read
+
+env:
+  PORTFOLIO_BRANCH: zara_portfolio
+  STAGING_BRANCH: zara_staging
+  TARGET_DIR: /var/www/html   # can override by secrets.TARGET_DIR if you want
 
 jobs:
-  build:
-    name: Detect changes & build if needed
+  merge:
+    name: Merge staging into portfolio (or open PR)
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.detect.outputs.changed }}
-      build_dir: ${{ steps.set_build_dir.outputs.build_dir }}
+      merged: ${{ steps.try_merge.outputs.merged }}
+      merge_method: ${{ steps.try_merge.outputs.merge_method }}
     steps:
-      - name: Checkout repo
+      - name: Checkout (fetch all)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false  # we'll set credentials manually as needed
 
-      - name: Detect changed files in this push
-        id: detect
+      - name: Setup git user
         run: |
-          BEFORE="${{ github.event.before }}"
-          AFTER="${{ github.sha }}"
-          echo "Before: $BEFORE"
-          echo "After:  $AFTER"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "changed=1" >> "$GITHUB_OUTPUT"
+      - name: Fetch branches
+        run: |
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git fetch --all --prune
+
+      - name: Try automatic merge (fast-forward or normal)
+        id: try_merge
+        run: |
+          set -euo pipefail
+          STAGING=${STAGING_BRANCH}
+          PORTFOLIO=${PORTFOLIO_BRANCH}
+          echo "Branches: staging=$STAGING portfolio=$PORTFOLIO"
+
+          # Ensure local branches exist
+          git checkout -B "$PORTFOLIO" "origin/$PORTFOLIO"
+
+          # Try merging staging into portfolio
+          if git merge --no-ff --no-edit "origin/$STAGING"; then
+            echo "Automatic merge succeeded."
+            # Try to push using GITHUB_TOKEN; may fail if branch protection prevents it.
+            if git push origin "HEAD:$PORTFOLIO"; then
+              echo "pushed_with=GITHUB_TOKEN" >> "$GITHUB_OUTPUT"
+              echo "merged=true" >> "$GITHUB_OUTPUT"
+              echo "merge_method=direct_push" >> "$GITHUB_OUTPUT"
+              exit 0
+            else
+              echo "Push with GITHUB_TOKEN failed (maybe branch protection)."
+              # If a MERGE_PAT secret exists, use it to push (PAT must have repo:contents write)
+              if [ -n "${{ secrets.MERGE_PAT }}" ]; then
+                REMOTE="https://${{ secrets.MERGE_PAT }}@github.com/${{ github.repository }}.git"
+                git remote set-url origin "$REMOTE"
+                if git push origin "HEAD:$PORTFOLIO"; then
+                  echo "pushed_with=MERGE_PAT" >> "$GITHUB_OUTPUT"
+                  echo "merged=true" >> "$GITHUB_OUTPUT"
+                  echo "merge_method=direct_push_pat" >> "$GITHUB_OUTPUT"
+                  exit 0
+                else
+                  echo "push_failed_even_with_PAT"
+                fi
+              fi
+              # Could not push — fall through to create PR
+            fi
+          else
+            echo "Merge produced conflicts or failed."
+            git merge --abort || true
+          fi
+
+          # If we reached here, automatic merge or push didn't happen. Create PR instead.
+          PR_TITLE="Auto PR: merge $STAGING → $PORTFOLIO (created by workflow)"
+          PR_BODY="This PR was automatically created by GitHub Actions after a push to \`$STAGING\`. Please review and merge."
+          # Use the REST API to create a PR
+          create_pr_response=$(curl -s -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls \
+            -d "$(jq -nc --arg t "$PR_TITLE" --arg b "$PR_BODY" --arg head "$STAGING" --arg base "$PORTFOLIO" '{title:$t, body:$b, head:$head, base:$base}')")
+
+          pr_url=$(echo "$create_pr_response" | jq -r .html_url // empty)
+          pr_number=$(echo "$create_pr_response" | jq -r .number // empty)
+
+          if [ -n "$pr_number" ] && [ "$pr_number" != "null" ]; then
+            echo "PR created: $pr_url"
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+            echo "merge_method=pr_created" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "Failed to create PR. API returned:"
+            echo "$create_pr_response"
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+            echo "merge_method=pr_failed" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+      - name: Show merge outputs (debug)
+        run: |
+          echo "merged = ${{ steps.try_merge.outputs.merged }}"
+          echo "merge_method = ${{ steps.try_merge.outputs.merge_method }}"
 
-          CHANGED_FILES=$(git diff --name-only "$BEFORE" "$AFTER" || true)
-          echo "$CHANGED_FILES"
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "changed=0" >> "$GITHUB_OUTPUT"
+  build_and_deploy:
+    name: Build & Deploy to server (runs only if merge was done or PR already created — we will only deploy for actual pushes to portfolio)
+    runs-on: ubuntu-latest
+    needs: merge
+    # Only run deploy when portfolio branch actually changed on remote.
+    # We'll detect by fetching portfolio and checking diff between last two commits.
+    if: always()
+    steps:
+      - name: Checkout portfolio branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.PORTFOLIO_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Detect if current workflow run included a new commit on portfolio
+        id: detect_portfolio_change
+        run: |
+          # Compare remote branch HEAD to the commit that triggered this workflow.
+          # If portfolio HEAD == remote origin/portfolio and the action didn't push, there might be no new commit.
+          git fetch origin ${{ env.PORTFOLIO_BRANCH }} --depth=1 || true
+          REMOTE_HEAD=$(git rev-parse origin/${{ env.PORTFOLIO_BRANCH }} | tr -d '\n')
+          LOCAL_HEAD=$(git rev-parse HEAD | tr -d '\n') || true
+          echo "REMOTE_HEAD=$REMOTE_HEAD"
+          echo "LOCAL_HEAD=$LOCAL_HEAD"
+          if [ "$REMOTE_HEAD" != "$LOCAL_HEAD" ]; then
+            # Update local to remote
+            git checkout -B ${{ env.PORTFOLIO_BRANCH }} origin/${{ env.PORTFOLIO_BRANCH }}
+            echo "changed=1" >> "$GITHUB_OUTPUT"
           else
+            # If equal, check if commit is new relative to workflow run: use github.event.head_commit
             echo "changed=1" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install Node if needed and run build / or compile SCSS
+      - name: Install Node if needed and run build / compile SCSS
         id: run_build
         run: |
           set -e
-          # Default build dir (repo root). If build produces dist/ change this below.
           BUILD_DIR="."
-
-          # If there's a package.json, run npm ci and npm run build (if script exists)
           if [ -f package.json ]; then
             echo "package.json found -> running npm ci"
             curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - || true
@@ -55,50 +159,23 @@ jobs:
             if npm run | grep -q "build"; then
               echo "npm build script found -> npm run build"
               npm run build || true
-              # If build output commonly goes to 'dist' or 'build', set BUILD_DIR accordingly.
               if [ -d dist ]; then BUILD_DIR="dist"; fi
               if [ -d build ]; then BUILD_DIR="build"; fi
             else
               echo "No npm build script; skipping npm run build"
             fi
           fi
-
-          # If no package.json but index.scss exists, compile it to index.css
           if [ ! -f package.json ] && [ -f index.scss ]; then
             echo "index.scss found -> compiling with sass"
-            # install dart-sass
             npm install -g sass || true
             sass index.scss index.css || true
             BUILD_DIR="."
           fi
-
-          # export build_dir to github output
           echo "build_dir=$BUILD_DIR" >> "$GITHUB_OUTPUT"
           echo "Done build step. BUILD_DIR=$BUILD_DIR"
 
-      - name: Set build directory output
-        id: set_build_dir
-        run: |
-          # The actual build_dir value comes from previous step output
-          # but keep a default fallback to '.'
-          if [ -n "${{ steps.run_build.outputs.build_dir }}" ]; then
-            echo "build_dir=${{ steps.run_build.outputs.build_dir }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "build_dir=." >> "$GITHUB_OUTPUT"
-          fi
-
-  deploy:
-    name: Deploy to server (runs only if changes detected)
-    runs-on: ubuntu-latest
-    needs: build
-    if: needs.build.outputs.changed == '1'
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Start ssh-agent and add deploy key
+        if: ${{ always() }}
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_KEY }}
@@ -114,10 +191,10 @@ jobs:
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          TARGET_DIR: ${{ secrets.TARGET_DIR }}
-          SOURCE_DIR: ${{ needs.build.outputs.build_dir }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR || env.TARGET_DIR }}
+          SOURCE_DIR: ${{ steps.run_build.outputs.build_dir }}
         run: |
-          echo "Deploying from SOURCE_DIR=${SOURCE_DIR}"
+          echo "Deploying from SOURCE_DIR=${SOURCE_DIR} to ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}"
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
           rsync -avz --delete --exclude='.git' --exclude='.github' "${SOURCE_DIR}/" ${DEPLOY_USER}@${DEPLOY_HOST}:${TARGET_DIR}/
@@ -126,16 +203,17 @@ jobs:
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          TARGET_DIR: ${{ secrets.TARGET_DIR }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR || env.TARGET_DIR }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} "sudo chown -R www-data:www-data ${TARGET_DIR} || true; sudo systemctl reload nginx || true"
+          ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} \
+            "sudo chown -R www-data:www-data ${TARGET_DIR} || true;"
 
-  no_changes:
-    name: No changes — skip deploy
+  notify_no_merge:
+    name: Notify:merge didn't happen (PR created) - informational
+    needs: merge
     runs-on: ubuntu-latest
-    needs: build
-    if: needs.build.outputs.changed == '0'
+    if: needs.merge.outputs.merged == 'false' && needs.merge.outputs.merge_method == 'pr_created'
     steps:
-      - name: Nothing to do
+      - name: Show PR created note
         run: |
-          echo "No changed files detected in this push. Skipping deploy."
+          echo "A Pull Request was created from $STAGING_BRANCH -> $PORTFOLIO_BRANCH. Please review/merge in GitHub UI."
